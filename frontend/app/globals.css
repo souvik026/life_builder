@@ -1,0 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  /* Earth tone palette */
+  --cream: #faf6f1;
+  --cream-dark: #f0ebe3;
+  --sand: #e8e0d4;
+  --sage: #7c9a6e;
+  --sage-light: #a8c49a;
+  --sage-dark: #5c7a4e;
+  --terracotta: #c4704b;
+  --terracotta-light: #e89a78;
+  --terracotta-dark: #a45533;
+  --bark: #3d2e1e;
+  --bark-light: #5c4a37;
+  --stone: #8a7e72;
+  --stone-light: #b0a698;
+  --warm-white: #fffcf7;
+  --clay: #d4a574;
+
+  --background: var(--cream);
+  --foreground: var(--bark);
+  --card-bg: var(--warm-white);
+  --card-border: var(--sand);
+  --muted: var(--stone);
+  --muted-light: var(--stone-light);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Outfit', sans-serif;
+
+  /* Expose palette to Tailwind */
+  --color-cream: var(--cream);
+  --color-cream-dark: var(--cream-dark);
+  --color-sand: var(--sand);
+  --color-sage: var(--sage);
+  --color-sage-light: var(--sage-light);
+  --color-sage-dark: var(--sage-dark);
+  --color-terracotta: var(--terracotta);
+  --color-terracotta-light: var(--terracotta-light);
+  --color-terracotta-dark: var(--terracotta-dark);
+  --color-bark: var(--bark);
+  --color-bark-light: var(--bark-light);
+  --color-stone: var(--stone);
+  --color-stone-light: var(--stone-light);
+  --color-warm-white: var(--warm-white);
+  --color-clay: var(--clay);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Subtle noise texture on body */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* Staggered fade-in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out both;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.4s ease-out both;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.4s ease-out both;
+}
+
+/* Stagger delays */
+.delay-1 { animation-delay: 0.05s; }
+.delay-2 { animation-delay: 0.1s; }
+.delay-3 { animation-delay: 0.15s; }
+.delay-4 { animation-delay: 0.2s; }
+.delay-5 { animation-delay: 0.25s; }
+.delay-6 { animation-delay: 0.3s; }
+.delay-7 { animation-delay: 0.35s; }
+.delay-8 { animation-delay: 0.4s; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--cream-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--stone-light);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--stone);
+}
+
+/* Focus ring style */
+*:focus-visible {
+  outline: 2px solid var(--sage);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
