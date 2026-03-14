@@ -1,11 +1,12 @@
 "use client";
 
 import useSWR from "swr";
-import { getJournalList, getJournalByDate, getTimedTasks } from "@/lib/api";
+import { getJournalList, getJournalById, getJournalByDate, getTimedTasks } from "@/lib/api";
 import type { JournalListItem, JournalEntry, TimedTask } from "@/lib/types";
 import { useState, useCallback } from "react";
 
 export function useJournal() {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   const { data: entries, mutate: refreshEntries } = useSWR<JournalListItem[]>(
@@ -13,9 +14,10 @@ export function useJournal() {
     getJournalList,
   );
 
+  // Fetch entry by ID (works for both journals and notes)
   const { data: selectedEntry } = useSWR<JournalEntry | null>(
-    selectedDate ? `journal-${selectedDate}` : null,
-    () => (selectedDate ? getJournalByDate(selectedDate) : null),
+    selectedId ? `journal-entry-${selectedId}` : null,
+    () => (selectedId ? getJournalById(selectedId) : null),
   );
 
   const { data: timedTasks } = useSWR<TimedTask[]>(
@@ -23,11 +25,13 @@ export function useJournal() {
     getTimedTasks,
   );
 
-  const selectDate = useCallback((date: string) => {
+  const selectEntry = useCallback((id: string, date: string) => {
+    setSelectedId(id);
     setSelectedDate(date);
   }, []);
 
   const clearSelection = useCallback(() => {
+    setSelectedId(null);
     setSelectedDate(null);
   }, []);
 
@@ -36,7 +40,7 @@ export function useJournal() {
     selectedDate,
     selectedEntry: selectedEntry || null,
     timedTasks: timedTasks || [],
-    selectDate,
+    selectEntry,
     clearSelection,
     refreshEntries,
   };

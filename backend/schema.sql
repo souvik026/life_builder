@@ -37,7 +37,9 @@ CREATE TABLE IF NOT EXISTS streaks (
 -- ── Journals ────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS journals (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    entry_date  DATE NOT NULL UNIQUE DEFAULT CURRENT_DATE,
+    entry_date  DATE NOT NULL DEFAULT CURRENT_DATE,
+    entry_type  TEXT DEFAULT 'journal' CHECK (entry_type IN ('journal', 'note')),
+    title       TEXT DEFAULT '',
     went_well   TEXT DEFAULT '',
     went_bad    TEXT DEFAULT '',
     reflection  TEXT DEFAULT '',

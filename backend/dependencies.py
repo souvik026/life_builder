@@ -12,10 +12,12 @@ from services.dashboard_service import DashboardService
 from services.setup_service import SetupService
 from repositories.goal_repo import GoalRepository
 from services.goal_service import GoalService
+from services.llm_service import LLMService
 
 # Singletons (initialized in main.py lifespan)
 settings = Settings()
 db = DatabaseClient(settings)
+llm_service = LLMService(settings) if settings.openai_api_key and settings.openai_api_key != "sk-PASTE_YOUR_KEY_HERE" else None
 
 
 # ── Repository factories ─────────────────────────────────────────────────
@@ -83,4 +85,5 @@ def get_setup_service() -> SetupService:
 
 
 def get_goal_service() -> GoalService:
-    return GoalService(goal_repo=get_goal_repo())
+    return GoalService(goal_repo=get_goal_repo(), llm_service=llm_service)
+

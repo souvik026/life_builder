@@ -61,6 +61,8 @@ export interface DashboardSummary {
 export interface JournalEntry {
   id: string;
   entry_date: string;
+  entry_type: "journal" | "note";
+  title: string;
   went_well: string;
   went_bad: string;
   reflection: string;
@@ -104,6 +106,8 @@ export interface TimedTaskPreview {
 export interface JournalListItem {
   id: string;
   entry_date: string;
+  entry_type: "journal" | "note";
+  title: string;
   mood: string;
 }
 

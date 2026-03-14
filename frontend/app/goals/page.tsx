@@ -60,6 +60,12 @@ export default function GoalsPage() {
   const [progressValue, setProgressValue] = useState("");
   const [progressNote, setProgressNote] = useState("");
 
+  // LLM generation state
+  const [visionText, setVisionText] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationError, setGenerationError] = useState("");
+  const { generateFromVision } = useGoals();
+
   const filteredGoals = activeFilter === "all"
     ? goals
     : goals.filter((g) => g.category === activeFilter);
@@ -126,17 +132,53 @@ export default function GoalsPage() {
           </div>
         </div>
 
-        {/* LLM Placeholder Banner */}
+        {/* LLM Generation Form */}
         <div className="mb-8 rounded-2xl border border-sand/60 bg-sage/5 px-6 py-5 animate-fade-in-up" style={{ animationDelay: "0.05s" }}>
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-4 mb-4">
             <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sage/10">
               <Sparkles className="h-4 w-4 text-sage" />
             </div>
-            <div>
+            <div className="flex-1">
               <p className="text-sm font-medium text-bark">AI-Powered Goal Setting</p>
-              <p className="mt-1 text-xs text-stone">
-                Coming soon: describe your vision to the WhatsApp bot and AI will summarize your aspirations into structured, trackable goals here.
+              <p className="mt-1 text-xs text-stone mb-3">
+                Describe your vision for the future, and AI will extract specific, trackable goals for you.
               </p>
+              
+              <textarea
+                value={visionText}
+                onChange={(e) => setVisionText(e.target.value)}
+                placeholder="E.g., I want to run a marathon this year and save $5000 for a vacation..."
+                rows={3}
+                className="w-full rounded-xl border border-sand bg-warm-white px-4 py-3 text-sm text-bark placeholder:text-stone-light focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage/20 resize-none transition-all"
+                disabled={isGenerating}
+              />
+              
+              {generationError && (
+                <p className="mt-2 text-xs text-red-500">{generationError}</p>
+              )}
+              
+              <div className="mt-3 flex justify-end">
+                <button
+                  onClick={async () => {
+                    if (!visionText.trim()) return;
+                    setIsGenerating(true);
+                    setGenerationError("");
+                    try {
+                      await generateFromVision(visionText);
+                      setVisionText("");
+                    } catch (err) {
+                      setGenerationError("Failed to generate goals. Check your OpenAI API key in backend/.env");
+                    } finally {
+                      setIsGenerating(false);
+                    }
+                  }}
+                  disabled={!visionText.trim() || isGenerating}
+                  className="flex items-center gap-2 rounded-xl bg-sage px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-sage-dark disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                >
+                  <Sparkles className={`h-4 w-4 ${isGenerating ? "animate-spin" : ""}`} />
+                  {isGenerating ? "Generating..." : "Generate Goals"}
+                </button>
+              </div>
             </div>
           </div>
         </div>

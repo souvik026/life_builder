@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from "swr";
-import { getGoals, createGoal, logGoalProgress } from "@/lib/api";
+import { getGoals, createGoal, logGoalProgress, createGoalsFromLLM } from "@/lib/api";
 import type { GoalSummary, GoalCreate } from "@/lib/types";
 
 export function useGoals(status?: string) {
@@ -21,6 +21,12 @@ export function useGoals(status?: string) {
     mutate();
   };
 
+  const generateFromVision = async (visionText: string) => {
+    const goals = await createGoalsFromLLM(visionText);
+    mutate();
+    return goals;
+  };
+
   return {
     goals: data || [],
     error,
@@ -28,5 +34,6 @@ export function useGoals(status?: string) {
     refresh: mutate,
     addGoal,
     logProgress,
+    generateFromVision,
   };
 }

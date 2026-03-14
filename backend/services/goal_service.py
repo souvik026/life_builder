@@ -1,11 +1,13 @@
 from datetime import date
 from repositories.goal_repo import GoalRepository
+from services.llm_service import LLMService
 from models.goal import Goal, GoalCreate, GoalUpdate, GoalLogCreate, GoalLog, GoalSummary, GoalDetail
 
 
 class GoalService:
-    def __init__(self, goal_repo: GoalRepository):
+    def __init__(self, goal_repo: GoalRepository, llm_service: LLMService | None = None):
         self.goal_repo = goal_repo
+        self.llm_service = llm_service
 
     async def get_all_goals(self, status: str | None = None) -> list[GoalSummary]:
         goals = await self.goal_repo.get_all(status=status)
@@ -42,18 +44,45 @@ class GoalService:
         await self.goal_repo.delete(goal_id)
 
     async def create_goals_from_llm(self, raw_text: str) -> list[Goal]:
-        """Placeholder for LLM-generated goals.
+        """Parse a user's vision description into structured goals using LLM."""
+        if not self.llm_service:
+            return []
 
-        TODO: When LLMService is available, this will:
-        1. Send raw_text to LLMService.call_json() with a prompt that asks
-           the LLM to extract structured goals from the user's vision description
-        2. Parse the response into GoalCreate objects
-        3. Create each goal via self.goal_repo.create(source="llm")
+        system_prompt = (
+            "You are a personal goal-setting coach. The user will describe their vision, "
+            "aspirations, or what they want to achieve. Extract structured, measurable goals from their description.\n\n"
+            "Return a JSON array of goal objects. Each object must have:\n"
+            '- "category": one of "health", "career", "personal", "financial", "social", "learning", "other"\n'
+            '- "title": a short, clear goal title (max 60 chars)\n'
+            '- "description": 1-2 sentence description of what success looks like\n'
+            '- "target_value": a numeric target if measurable, or null\n'
+            '- "unit": the unit of measurement (e.g. "kg", "books", "$", "hours"), or "" if no numeric target\n'
+            '- "target_date": ISO date string (YYYY-MM-DD) for a reasonable deadline, or null\n\n'
+            "Extract 3-7 goals. Be specific and actionable. Make targets realistic."
+        )
 
-        Future integration: WhatsApp bot sends user's vision text here,
-        LLM parses it into actionable goals with categories, targets, and timelines.
-        """
-        return []
+        try:
+            result = await self.llm_service.call_json(raw_text, system=system_prompt)
+            goals_data = result if isinstance(result, list) else result.get("goals", [])
+        except Exception:
+            return []
+
+        created: list[Goal] = []
+        for g in goals_data:
+            try:
+                goal = await self.goal_repo.create(
+                    category=g.get("category", "other"),
+                    title=g.get("title", "Untitled Goal"),
+                    description=g.get("description", ""),
+                    target_value=g.get("target_value"),
+                    unit=g.get("unit", ""),
+                    target_date=g.get("target_date"),
+                    source="llm",
+                )
+                created.append(goal)
+            except Exception:
+                continue
+        return created
 
     def _to_summary(self, goal: Goal) -> GoalSummary:
         progress_pct = 0.0
