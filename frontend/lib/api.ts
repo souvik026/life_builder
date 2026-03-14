@@ -1,6 +1,6 @@
 import type { DashboardSummary, SetupStatus, HabitPreview, JournalEntry, JournalListItem, TimedTask, GoalSummary, GoalCreate, GoalLog } from "./types";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://life-planner-backend-0q41.onrender.com";
 
 async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
@@ -8,8 +8,8 @@ async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
     ...options,
   });
   if (!res.ok) {
-    const msg = await res.text().catch(() => "");
-    throw new Error(`API error: ${res.status} ${res.statusText} ${msg}`);
+    const msg = await res.text().catch(() => "No error details available");
+    throw new Error(`API ${res.status}: ${msg}`);
   }
   return res.json();
 }

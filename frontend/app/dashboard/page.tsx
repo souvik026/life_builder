@@ -17,8 +17,25 @@ import { TaskTimeChart } from "@/components/dashboard/TaskTimeChart";
 import { Calendar, Target, Flame, TrendingUp, Leaf } from "lucide-react";
 
 export default function DashboardPage() {
-  const { data, isLoading } = useDashboard();
+  const { data, isLoading, error } = useDashboard();
   const { toggleHabit } = useHabits();
+
+  if (error) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-cream">
+        <div className="flex flex-col items-center gap-3 text-red-500">
+          <Leaf className="h-8 w-8" />
+          <span className="text-sm font-medium">Error loading dashboard: {error.message}</span>
+          <button 
+            onClick={() => window.location.reload()}
+            className="mt-4 rounded-lg bg-bark px-4 py-2 text-white text-xs"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading || !data) {
     return (
