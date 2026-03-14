@@ -3,8 +3,8 @@ import "./globals.css";
 import { NavBar } from "@/components/ui/NavBar";
 
 export const metadata: Metadata = {
-  title: "Habit Tracker — 90 Day Challenge",
-  description: "Personal 90-day habit tracking system",
+  title: "Aesthetic Life Tracker — 90 Days",
+  description: "A calming, green-themed space to track habits, boost productivity, and embrace daily self-care",
 };
 
 export default function RootLayout({

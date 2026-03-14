@@ -11,7 +11,7 @@ interface CalorieGaugeProps {
 export function CalorieGauge({ burnt, target }: CalorieGaugeProps) {
   const pct = Math.min((burnt / target) * 100, 100);
   const remaining = Math.max(target - burnt, 0);
-  const color = pct >= 100 ? "#7c9a6e" : "#c4704b";
+  const color = pct >= 100 ? "#4a7c59" : "#3d8b63";
 
   return (
     <Card>
@@ -21,7 +21,7 @@ export function CalorieGauge({ burnt, target }: CalorieGaugeProps) {
       <div className="flex items-center gap-6">
         <div className="relative flex items-center justify-center">
           <svg width={100} height={100} className="-rotate-90">
-            <circle cx={50} cy={50} r={42} stroke="#e8e0d4" strokeWidth={7} fill="none" />
+            <circle cx={50} cy={50} r={42} stroke="#d0e0d5" strokeWidth={7} fill="none" />
             <circle
               cx={50}
               cy={50}

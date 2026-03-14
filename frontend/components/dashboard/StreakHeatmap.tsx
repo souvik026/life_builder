@@ -54,8 +54,8 @@ export function StreakHeatmap({ morningHabits, lifeHabits }: StreakHeatmapProps)
                         className="mx-auto h-5 w-5 rounded-md transition-colors duration-300"
                         style={{
                           backgroundColor: isCompleted
-                            ? `rgba(124, 154, 110, ${opacity})`
-                            : `rgba(232, 224, 212, ${opacity + 0.3})`,
+                            ? `rgba(74, 124, 89, ${opacity})`
+                            : `rgba(208, 224, 213, ${opacity + 0.3})`,
                         }}
                       />
                     </td>

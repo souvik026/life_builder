@@ -4,12 +4,13 @@ import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { previewHabits, lockSetup } from "@/lib/api";
 import { useRouter } from "next/navigation";
-import { Check, ChevronRight, ChevronLeft, Lock, User, ListChecks, Target, Leaf } from "lucide-react";
-import type { HabitPreview } from "@/lib/types";
+import { Check, ChevronRight, ChevronLeft, Lock, User, ListChecks, Target, Leaf, Clock } from "lucide-react";
+import type { HabitPreview, TimedTaskPreview } from "@/lib/types";
 
 const STEPS = [
   { label: "Profile", icon: User },
   { label: "Habits", icon: ListChecks },
+  { label: "Tasks", icon: Clock },
   { label: "Goals", icon: Target },
   { label: "Lock", icon: Lock },
 ];
@@ -32,6 +33,10 @@ const DEFAULT_HABITS_MD = `## Morning Routine
 - 8 glasses of water
 - Sleep by 10:30 PM`;
 
+const DEFAULT_TASKS_MD = `Deep work - 60
+Side project - 60
+Language learning - 60`;
+
 export default function SetupPage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
@@ -43,6 +48,8 @@ export default function SetupPage() {
   const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 10));
   const [habitsMd, setHabitsMd] = useState(DEFAULT_HABITS_MD);
   const [habitPreview, setHabitPreview] = useState<HabitPreview[]>([]);
+  const [timedTasksMd, setTimedTasksMd] = useState(DEFAULT_TASKS_MD);
+  const [taskPreview, setTaskPreview] = useState<TimedTaskPreview[]>([]);
   const [startWeight, setStartWeight] = useState("");
   const [targetWeight, setTargetWeight] = useState("");
   const [targetCalories, setTargetCalories] = useState("500");
@@ -51,6 +58,23 @@ export default function SetupPage() {
   const handlePreview = async () => {
     const previewed = await previewHabits(habitsMd);
     setHabitPreview(previewed);
+  };
+
+  const handleTaskPreview = () => {
+    const tasks: TimedTaskPreview[] = [];
+    for (const line of timedTasksMd.split("\n")) {
+      const trimmed = line.trim().replace(/^[-*]\s+/, "");
+      if (!trimmed) continue;
+      if (trimmed.includes(" - ")) {
+        const parts = trimmed.split(" - ");
+        const name = parts.slice(0, -1).join(" - ").trim();
+        const mins = Math.max(parseInt(parts[parts.length - 1]) || 60, 60);
+        if (name) tasks.push({ name, target_minutes: mins });
+      } else {
+        tasks.push({ name: trimmed, target_minutes: 60 });
+      }
+    }
+    setTaskPreview(tasks);
   };
 
   const handleLock = async () => {
@@ -63,6 +87,7 @@ export default function SetupPage() {
       target_calories: parseInt(targetCalories) || 500,
       whatsapp_number: whatsappNumber,
       habits_md_raw: habitsMd,
+      timed_tasks_raw: timedTasksMd,
     });
     setConfigHash(result.config_hash);
     setIsLocking(false);
@@ -74,7 +99,8 @@ export default function SetupPage() {
       case 0: return userName.trim().length > 0 && startDate.length > 0;
       case 1: return habitsMd.trim().length > 0;
       case 2: return true;
-      case 3: return confirmed;
+      case 3: return true;
+      case 4: return confirmed;
       default: return false;
     }
   };
@@ -167,7 +193,7 @@ export default function SetupPage() {
               <div className="space-y-6">
                 <h2 className="font-[family-name:var(--font-display)] text-xl font-semibold text-bark">Define Your Habits</h2>
                 <p className="text-sm text-stone">
-                  Use markdown format. &quot;## Morning Routine&quot; for morning habits, &quot;## Life Habits&quot; for life habits.
+                  Use markdown format: &quot;## Morning Routine&quot;, &quot;## Evening Routine&quot;, or &quot;## Life Habits&quot;.
                 </p>
                 <textarea
                   value={habitsMd}
@@ -188,7 +214,7 @@ export default function SetupPage() {
                       {habitPreview.map((h, i) => (
                         <div key={i} className="flex items-center gap-2 text-sm">
                           <span className={`inline-block w-16 rounded-full px-2.5 py-0.5 text-xs font-medium text-center ${
-                            h.category === "morning" ? "bg-clay/15 text-terracotta-dark" : "bg-sage/10 text-sage-dark"
+                            h.category === "morning" ? "bg-clay/15 text-terracotta-dark" : h.category === "evening" ? "bg-amber-100 text-amber-800" : "bg-sage/10 text-sage-dark"
                           }`}>
                             {h.category}
                           </span>
@@ -201,8 +227,51 @@ export default function SetupPage() {
               </div>
             )}
 
-            {/* Step 2: Goals */}
+            {/* Step 2: Timed Tasks */}
             {step === 2 && (
+              <div className="space-y-6">
+                <h2 className="font-[family-name:var(--font-display)] text-xl font-semibold text-bark">90-Day Timed Tasks</h2>
+                <p className="text-sm text-stone">
+                  Define tasks you commit to doing for at least <strong>1 hour daily</strong>.
+                  Format: &quot;Task name - minutes&quot; (minimum 60 min).
+                </p>
+                <textarea
+                  value={timedTasksMd}
+                  onChange={(e) => setTimedTasksMd(e.target.value)}
+                  rows={6}
+                  placeholder={"Deep work - 60\nSide project - 60\nLanguage learning - 60"}
+                  className={`${INPUT_CLS} font-mono text-xs leading-relaxed`}
+                />
+                <button
+                  onClick={handleTaskPreview}
+                  className="rounded-xl bg-cream-dark px-5 py-2.5 text-sm font-medium text-bark-light hover:bg-sand transition-colors"
+                >
+                  Preview Tasks
+                </button>
+                {taskPreview.length > 0 && (
+                  <div className="rounded-xl border border-sand/60 bg-cream p-4">
+                    <h3 className="mb-3 text-xs font-semibold text-stone uppercase tracking-wide">Parsed Tasks</h3>
+                    <div className="space-y-1.5">
+                      {taskPreview.map((t, i) => (
+                        <div key={i} className="flex items-center justify-between text-sm">
+                          <div className="flex items-center gap-2">
+                            <Clock className="h-3.5 w-3.5 text-sage" />
+                            <span className="text-bark">{t.name}</span>
+                          </div>
+                          <span className="text-xs text-stone font-medium">{t.target_minutes} min/day</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <p className="text-xs text-stone-light">
+                  Leave empty to skip. You can also add tasks later from the journal page.
+                </p>
+              </div>
+            )}
+
+            {/* Step 3: Goals */}
+            {step === 3 && (
               <div className="space-y-6">
                 <h2 className="font-[family-name:var(--font-display)] text-xl font-semibold text-bark">Set Your Goals</h2>
                 <div className="grid grid-cols-2 gap-4">
@@ -252,8 +321,8 @@ export default function SetupPage() {
               </div>
             )}
 
-            {/* Step 3: Lock */}
-            {step === 3 && !configHash && (
+            {/* Step 4: Lock */}
+            {step === 4 && !configHash && (
               <div className="space-y-6">
                 <h2 className="font-[family-name:var(--font-display)] text-xl font-semibold text-bark">Review & Lock</h2>
                 <div className="rounded-xl bg-terracotta/5 border border-terracotta/20 p-4">
@@ -279,6 +348,12 @@ export default function SetupPage() {
                   <h4 className="mb-2 text-xs font-semibold text-stone uppercase tracking-wide">Habits</h4>
                   <pre className="text-xs text-bark-light whitespace-pre-wrap leading-relaxed">{habitsMd}</pre>
                 </div>
+                {timedTasksMd.trim() && (
+                  <div className="rounded-xl border border-sand/60 bg-cream p-4">
+                    <h4 className="mb-2 text-xs font-semibold text-stone uppercase tracking-wide">Timed Tasks</h4>
+                    <pre className="text-xs text-bark-light whitespace-pre-wrap leading-relaxed">{timedTasksMd}</pre>
+                  </div>
+                )}
                 <label className="flex items-center gap-3 cursor-pointer group">
                   <input
                     type="checkbox"
@@ -300,8 +375,8 @@ export default function SetupPage() {
               </div>
             )}
 
-            {/* Step 3: Success */}
-            {step === 3 && configHash && (
+            {/* Step 4: Success */}
+            {step === 4 && configHash && (
               <div className="space-y-5 text-center py-8 animate-scale-in">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-sage/10">
                   <Leaf className="h-8 w-8 text-sage" />
@@ -328,7 +403,7 @@ export default function SetupPage() {
             >
               <ChevronLeft className="h-4 w-4" /> Back
             </button>
-            {step < 3 && (
+            {step < 4 && (
               <button
                 onClick={() => setStep(step + 1)}
                 disabled={!canProceed()}

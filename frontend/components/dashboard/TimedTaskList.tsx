@@ -41,7 +41,7 @@ export function TimedTaskList({ tasks }: TimedTaskListProps) {
                   className="h-2 rounded-full transition-all duration-700 ease-out"
                   style={{
                     width: `${pct}%`,
-                    backgroundColor: pct >= 100 ? "#7c9a6e" : "#c4704b",
+                    backgroundColor: pct >= 100 ? "#4a7c59" : "#3d8b63",
                   }}
                 />
               </div>

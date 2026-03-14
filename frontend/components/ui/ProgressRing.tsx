@@ -12,7 +12,7 @@ export function ProgressRing({
   percentage,
   size = 120,
   strokeWidth = 8,
-  color = "#7c9a6e",
+  color = "#4a7c59",
   label,
 }: ProgressRingProps) {
   const radius = (size - strokeWidth) / 2;
@@ -26,7 +26,7 @@ export function ProgressRing({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="#e8e0d4"
+          stroke="#d0e0d5"
           strokeWidth={strokeWidth}
           fill="none"
         />

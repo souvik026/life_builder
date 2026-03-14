@@ -1,0 +1,41 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Mountain silhouette - pixel art style -->
+  <rect width="400" height="300" fill="#d0e0d5"/>
+  <!-- Sky gradient blocks -->
+  <rect x="0" y="0" width="400" height="100" fill="#e2efe8"/>
+  <!-- Sun -->
+  <rect x="300" y="30" width="40" height="40" rx="20" fill="#7fb08c" opacity="0.6"/>
+  <!-- Mountains - pixelated -->
+  <g fill="#2d5e3a">
+    <rect x="0" y="200" width="400" height="100"/>
+    <rect x="20" y="180" width="40" height="20"/>
+    <rect x="40" y="160" width="40" height="20"/>
+    <rect x="60" y="140" width="40" height="20"/>
+    <rect x="80" y="120" width="40" height="20"/>
+    <rect x="100" y="100" width="20" height="20"/>
+    <rect x="100" y="120" width="40" height="20"/>
+    <rect x="120" y="140" width="40" height="20"/>
+    <rect x="140" y="160" width="40" height="20"/>
+    <rect x="160" y="180" width="40" height="20"/>
+  </g>
+  <g fill="#4a7c59">
+    <rect x="180" y="180" width="40" height="20"/>
+    <rect x="200" y="160" width="40" height="20"/>
+    <rect x="220" y="140" width="40" height="20"/>
+    <rect x="240" y="120" width="40" height="20"/>
+    <rect x="260" y="100" width="20" height="20"/>
+    <rect x="260" y="120" width="40" height="20"/>
+    <rect x="280" y="140" width="40" height="20"/>
+    <rect x="300" y="160" width="40" height="20"/>
+    <rect x="320" y="180" width="80" height="20"/>
+  </g>
+  <!-- Trees -->
+  <g fill="#1a3a2a">
+    <rect x="50" y="190" width="6" height="10"/>
+    <rect x="47" y="184" width="12" height="6"/>
+    <rect x="150" y="190" width="6" height="10"/>
+    <rect x="147" y="184" width="12" height="6"/>
+    <rect x="350" y="190" width="6" height="10"/>
+    <rect x="347" y="184" width="12" height="6"/>
+  </g>
+</svg>

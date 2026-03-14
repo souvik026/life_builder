@@ -2,22 +2,22 @@
 @import "tailwindcss";
 
 :root {
-  /* Earth tone palette */
-  --cream: #faf6f1;
-  --cream-dark: #f0ebe3;
-  --sand: #e8e0d4;
-  --sage: #7c9a6e;
-  --sage-light: #a8c49a;
-  --sage-dark: #5c7a4e;
-  --terracotta: #c4704b;
-  --terracotta-light: #e89a78;
-  --terracotta-dark: #a45533;
-  --bark: #3d2e1e;
-  --bark-light: #5c4a37;
-  --stone: #8a7e72;
-  --stone-light: #b0a698;
-  --warm-white: #fffcf7;
-  --clay: #d4a574;
+  /* Green aesthetic palette */
+  --cream: #f0f7f4;
+  --cream-dark: #e2efe8;
+  --sand: #d0e0d5;
+  --sage: #4a7c59;
+  --sage-light: #7fb08c;
+  --sage-dark: #2d5e3a;
+  --terracotta: #3d8b63;
+  --terracotta-light: #6bb58a;
+  --terracotta-dark: #2a6b47;
+  --bark: #1a3a2a;
+  --bark-light: #2d5c42;
+  --stone: #6b8a76;
+  --stone-light: #94b3a0;
+  --warm-white: #f7fcf9;
+  --clay: #5a9e6f;
 
   --background: var(--cream);
   --foreground: var(--bark);

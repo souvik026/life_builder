@@ -8,6 +8,12 @@ import { CalorieGauge } from "@/components/dashboard/CalorieGauge";
 import { HabitGrid } from "@/components/dashboard/HabitGrid";
 import { TimedTaskList } from "@/components/dashboard/TimedTaskList";
 import { StreakHeatmap } from "@/components/dashboard/StreakHeatmap";
+import { Banner } from "@/components/dashboard/Banner";
+import { QuoteCard } from "@/components/dashboard/QuoteCard";
+import { GoalSection } from "@/components/dashboard/GoalSection";
+import { CompletionTrendChart } from "@/components/dashboard/CompletionTrendChart";
+import { MoodTrendChart } from "@/components/dashboard/MoodTrendChart";
+import { TaskTimeChart } from "@/components/dashboard/TaskTimeChart";
 import { Calendar, Target, Flame, TrendingUp, Leaf } from "lucide-react";
 
 export default function DashboardPage() {
@@ -25,22 +31,19 @@ export default function DashboardPage() {
     );
   }
 
-  const totalHabits = data.morning_habits.length + data.life_habits.length;
-  const completedHabits =
-    data.morning_habits.filter((h) => h.completed).length +
-    data.life_habits.filter((h) => h.completed).length;
-
-  const bestStreak = Math.max(
-    ...data.morning_habits.map((h) => h.streak),
-    ...data.life_habits.map((h) => h.streak),
-    0
-  );
+  const allHabits = [...data.morning_habits, ...(data.evening_habits || []), ...data.life_habits];
+  const totalHabits = allHabits.length;
+  const completedHabits = allHabits.filter((h) => h.completed).length;
+  const bestStreak = Math.max(...allHabits.map((h) => h.streak), 0);
 
   return (
     <div className="min-h-screen bg-cream">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        {/* Banner */}
+        <Banner />
+
         {/* Header */}
-        <div className="mb-10 animate-fade-in-up">
+        <div className="mb-6 animate-fade-in-up">
           <h1 className="font-[family-name:var(--font-display)] text-3xl font-bold text-bark">
             Good {new Date().getHours() < 12 ? "morning" : new Date().getHours() < 18 ? "afternoon" : "evening"}
           </h1>
@@ -48,6 +51,9 @@ export default function DashboardPage() {
             Day <span className="font-[family-name:var(--font-display)] font-semibold text-bark">{data.day_number}</span> of 90 &middot; {data.today}
           </p>
         </div>
+
+        {/* Daily quote */}
+        <QuoteCard />
 
         {/* Stat cards row */}
         <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -74,7 +80,16 @@ export default function DashboardPage() {
                 onToggle={toggleHabit}
               />
             </div>
-            <div className="animate-fade-in-up" style={{ animationDelay: "0.45s" }}>
+            {data.evening_habits && data.evening_habits.length > 0 && (
+              <div className="animate-fade-in-up" style={{ animationDelay: "0.45s" }}>
+                <HabitGrid
+                  title="Evening Routine"
+                  habits={data.evening_habits}
+                  onToggle={toggleHabit}
+                />
+              </div>
+            )}
+            <div className="animate-fade-in-up" style={{ animationDelay: "0.55s" }}>
               <HabitGrid
                 title="Life Habits"
                 habits={data.life_habits}
@@ -84,7 +99,7 @@ export default function DashboardPage() {
             <div className="animate-fade-in-up" style={{ animationDelay: "0.55s" }}>
               <StreakHeatmap
                 morningHabits={data.morning_habits}
-                lifeHabits={data.life_habits}
+                lifeHabits={[...(data.evening_habits || []), ...data.life_habits]}
               />
             </div>
           </div>
@@ -106,6 +121,22 @@ export default function DashboardPage() {
             <div className="animate-slide-in-right" style={{ animationDelay: "0.6s" }}>
               <TimedTaskList tasks={data.timed_tasks} />
             </div>
+            <div className="animate-slide-in-right" style={{ animationDelay: "0.7s" }}>
+              <GoalSection />
+            </div>
+          </div>
+        </div>
+
+        {/* Trend charts */}
+        <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <div className="animate-fade-in-up" style={{ animationDelay: "0.75s" }}>
+            <CompletionTrendChart data={data.completion_trend || []} />
+          </div>
+          <div className="animate-fade-in-up" style={{ animationDelay: "0.85s" }}>
+            <MoodTrendChart data={data.mood_trend || []} />
+          </div>
+          <div className="animate-fade-in-up" style={{ animationDelay: "0.95s" }}>
+            <TaskTimeChart data={data.task_time_distribution || []} />
           </div>
         </div>
 

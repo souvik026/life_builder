@@ -29,14 +29,33 @@ export interface TimedTask {
   prompt_add_task: boolean;
 }
 
+export interface CompletionTrendPoint {
+  date: string;
+  pct: number;
+}
+
+export interface MoodTrendPoint {
+  date: string;
+  mood: string;
+}
+
+export interface TaskTimeBar {
+  name: string;
+  total_minutes: number;
+}
+
 export interface DashboardSummary {
   today: string;
   day_number: number;
   body: BodyStats;
   morning_habits: HabitStatus[];
+  evening_habits: HabitStatus[];
   life_habits: HabitStatus[];
   timed_tasks: TimedTask[];
   overall_completion_pct: number;
+  completion_trend: CompletionTrendPoint[];
+  mood_trend: MoodTrendPoint[];
+  task_time_distribution: TaskTimeBar[];
 }
 
 export interface JournalEntry {
@@ -46,6 +65,7 @@ export interface JournalEntry {
   went_bad: string;
   reflection: string;
   ai_insight: string;
+  mood: string;
   created_at: string;
 }
 
@@ -65,14 +85,57 @@ export interface SetupConfig {
   target_calories: number;
   whatsapp_number: string;
   habits_md_raw: string;
+  timed_tasks_raw: string;
   config_hash: string;
   is_locked: boolean;
 }
 
 export interface HabitPreview {
   name: string;
-  category: "morning" | "life";
+  category: "morning" | "evening" | "life";
   description: string;
+}
+
+export interface TimedTaskPreview {
+  name: string;
+  target_minutes: number;
+}
+
+export interface JournalListItem {
+  id: string;
+  entry_date: string;
+  mood: string;
+}
+
+export interface GoalSummary {
+  id: string;
+  category: "health" | "career" | "personal" | "financial" | "social" | "learning" | "other";
+  title: string;
+  description: string;
+  current_value: number;
+  target_value: number | null;
+  unit: string;
+  progress_pct: number;
+  days_remaining: number | null;
+  status: "active" | "completed" | "paused" | "abandoned";
+  source: "manual" | "whatsapp_bot" | "llm";
+}
+
+export interface GoalCreate {
+  category: string;
+  title: string;
+  description?: string;
+  target_value?: number;
+  unit?: string;
+  target_date?: string;
+}
+
+export interface GoalLog {
+  id: string;
+  goal_id: string;
+  log_date: string;
+  value: number;
+  note: string;
 }
 
 export interface ReportSummary {
