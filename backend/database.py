@@ -10,7 +10,12 @@ class DatabaseClient:
         self.pool: asyncpg.Pool | None = None
 
     async def connect(self) -> None:
-        self.pool = await asyncpg.create_pool(dsn=self.dsn, min_size=2, max_size=10)
+        try:
+            self.pool = await asyncpg.create_pool(dsn=self.dsn, min_size=2, max_size=10)
+        except Exception as e:
+            print(f"CRITICAL: Failed to connect to database at {self.dsn}")
+            print(f"Error details: {e}")
+            raise e
 
     async def close(self) -> None:
         if self.pool:
