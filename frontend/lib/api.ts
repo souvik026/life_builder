@@ -1,6 +1,6 @@
 import type { DashboardSummary, SetupStatus, HabitPreview, JournalEntry, JournalListItem, TimedTask, GoalSummary, GoalCreate, GoalLog } from "./types";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://life-planner-backend-0q41.onrender.com";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || (process.env.NODE_ENV === "development" ? "http://localhost:8000" : "https://life-planner-backend-0q41.onrender.com");
 
 async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
